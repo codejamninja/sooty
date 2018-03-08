@@ -1,0 +1,71 @@
+{
+  "name": "sooty",
+  "version": "0.0.1",
+  "description": "A bit of oofle dust to scrape websites",
+  "homepage": "https://github.com/jamrizzi/sooty",
+  "author": {
+    "name": "Jam Risser",
+    "email": "jam@jamrizzi.com",
+    "url": "https://jam.jamrizzi.com"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "bin"
+  ],
+  "bin": {
+    "sooty": "bin/sooty.js"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run lint && babel src/lib -d lib && babel src/bin -d bin",
+    "clean": "rm -rf lib bin",
+    "lint": "eslint ./",
+    "lint:fix": "eslint --fix ./",
+    "prepublish": "npm run build",
+    "start": "npm run lint && babel-node src/bin/sooty -r demo",
+    "start:dist": "npm run build && node bin/sooty"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "boom": "^7.2.0",
+    "commander": "^2.15.0",
+    "easy-joi": "0.0.2",
+    "joi": "^13.1.2",
+    "lodash": "^4.17.5",
+    "puppeteer": "^1.1.1",
+    "set-envs": "^0.1.0",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.9.0"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jamrizzi/sooty",
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "4"
+          }
+        }
+      ],
+      "stage-2"
+    ]
+  },
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "eslintIgnore": [
+    "lib",
+    "bin"
+  ]
+}

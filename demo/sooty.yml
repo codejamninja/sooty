@@ -1,0 +1,3 @@
+hello: ${DOG:tree}
+yeah:
+  - ${USER}
