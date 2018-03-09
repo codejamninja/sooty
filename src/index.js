@@ -5,17 +5,11 @@ import validate from './validate';
 
 let browser = null;
 
-export default async function scrape(config) {
+export default async function scrape(unvalidatedConfig) {
   try {
-    let configKeys = _.keys(config);
-    let single = false;
-    if (_.includes(configKeys, 'url')) {
-      single = true;
-      config = { single: config };
-      configKeys = _.keys(config);
-    }
-    await validate(config);
-    const results = _.zipObject(
+    const { config, format } = await validate(unvalidatedConfig);
+    const configKeys = _.keys(config);
+    let results = _.zipObject(
       configKeys,
       await Promise.mapSeries(configKeys, key => {
         const { url, queries } = config[key];
@@ -23,10 +17,13 @@ export default async function scrape(config) {
       })
     );
     await browser.close();
-    if (single) return results.single;
+    results = filterResults(config, results);
+    if (format === 'single') return results.single;
     return results;
   } catch (err) {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
     throw err;
   }
 }
@@ -46,6 +43,36 @@ async function evaluate(url, pageFunction, context) {
   return page.evaluate(pageFunction, context);
 }
 
+function filterResults(config, results) {
+  const filteredResults = {};
+  _.each(results, (result, resultKey) => {
+    const filteredQueries = {};
+    _.each(result, (queryValue, queryKey) => {
+      const queryConfig = config[resultKey].queries[queryKey];
+      filteredQueries[queryKey] = _.map(queryValue, value => {
+        if (queryConfig.filter) {
+          value = (value.match(newRegExp(queryConfig.filter)) || []).join('');
+        }
+        if (queryConfig.replace) {
+          if (_.isString(queryConfig.replace)) {
+            queryConfig.replace = {
+              match: queryConfig.replace,
+              value: ''
+            };
+          }
+          value = value.replace(
+            newRegExp(queryConfig.replace.match),
+            queryConfig.replace.value
+          );
+        }
+        return value;
+      });
+    });
+    filteredResults[resultKey] = filteredQueries;
+  });
+  return filteredResults;
+}
+
 /* eslint-disable no-var,no-undef,no-prototype-builtins,no-restricted-syntax,vars-on-top,no-loop-func */
 // executed in browser context
 function pageFunction({ queries }) {
@@ -54,12 +81,6 @@ function pageFunction({ queries }) {
     if (queries.hasOwnProperty(key)) {
       var query = queries[key];
       var queryResults = [];
-      if (typeof query === 'string') {
-        query = {
-          selector: query,
-          html: false
-        };
-      }
       document.querySelectorAll(query.selector).forEach(element => {
         queryResults.push(query.html ? element.innerHTML : element.innerText);
       });
@@ -67,4 +88,16 @@ function pageFunction({ queries }) {
     }
   }
   return results;
+}
+
+function newRegExp(regexString) {
+  let expression = regexString;
+  let flags = '';
+  if (/^\/((\\\/)|[^\/])*\//.test(regexString)) {
+    expression = (regexString.match(/^\/((\\\/)|[^\/])*/g) || [])
+      .join('')
+      .substr(1);
+    flags = (regexString.match(/[^\/]*$/g) || []).join('');
+  }
+  return new RegExp(expression, flags);
 }
