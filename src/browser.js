@@ -14,7 +14,8 @@ export async function evaluate(url, pageFunction, context = {}) {
   // eslint-disable-next-line no-console
   page.on('console', message => console.log(message));
   await page.goto(url);
-  return page.evaluate(pageFunction, context);
+  const result = await page.evaluate(pageFunction, context);
+  return { page, result };
 }
 
 export async function closeBrowser() {
