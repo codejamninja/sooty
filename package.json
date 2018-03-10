@@ -24,6 +24,7 @@
     "easy-joi": "0.0.2",
     "joi": "^13.1.2",
     "lodash": "^4.17.5",
+    "newregexp": "0.0.1",
     "puppeteer": "^1.1.1"
   },
   "devDependencies": {
@@ -56,5 +57,8 @@
   },
   "eslintIgnore": [
     "lib"
-  ]
+  ],
+  "jest": {
+    "testMatch": "**/tests/**/*.js"
+  }
 }
