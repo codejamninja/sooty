@@ -50,7 +50,8 @@ function filterResults(config, results) {
     const filteredQueries = {};
     _.each(result, (queryValue, queryKey) => {
       const queryConfig = config[resultKey].queries[queryKey];
-      filteredQueries[queryKey] = _.map(queryValue, value => {
+      const filteredQueryValue = [];
+      _.each(queryValue, value => {
         if (queryConfig.filter) {
           value = (value.match(newRegExp(queryConfig.filter)) || []).join('');
         }
@@ -66,8 +67,11 @@ function filterResults(config, results) {
             queryConfig.replace.value
           );
         }
-        return value;
+        if (value && value.length > 0) {
+          filteredQueryValue.push(value);
+        }
       });
+      filteredQueries[queryKey] = filteredQueryValue;
     });
     filteredResults[resultKey] = filteredQueries;
   });
