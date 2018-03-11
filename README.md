@@ -1,3 +1,5 @@
+![sooty2011](https://user-images.githubusercontent.com/6234038/37239922-524b796a-2443-11e8-961b-9ed61344b1b1.png)
+
 # sooty
 
 [![Beerpay](https://beerpay.io/jamrizzi/sooty/badge.svg?style=beer-square)](https://beerpay.io/jamrizzi/sooty)
