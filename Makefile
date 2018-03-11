@@ -1,4 +1,4 @@
-BUILDDIR=build
+BUILDDIR=docs/build
 SOURCEDIR=docs
 SPHINXBUILD=sphinx-build
 SPHINXOPTS=
@@ -10,7 +10,7 @@ start: serve
 
 .PHONY: serve
 serve: build
-	@cd build/html && python3 -m http.server
+	@cd docs/build/html && python3 -m http.server
 
 .PHONY: help
 help:
