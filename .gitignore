@@ -48,3 +48,5 @@ idea/
 
 # Application
 /lib
+/env
+/docs/build
