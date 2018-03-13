@@ -14,10 +14,6 @@ a:hover {
   color: #ffffff !important;
 }
 
-.local-toc > ul > li > a {
-  color: #FF9900;
-}
-
 .wy-form input[name=q] {
   border-width: 0px;
 }

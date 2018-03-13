@@ -1,4 +1,4 @@
-# Sooty
+![sooty2011](https://user-images.githubusercontent.com/6234038/37239922-524b796a-2443-11e8-961b-9ed61344b1b1.png)
 
 [![Beerpay](https://beerpay.io/jamrizzi/sooty/make-wish.svg?style=flat-square)](https://beerpay.io/jamrizzi/sooty?focus=wish)
 [![GitHub stars](https://img.shields.io/github/stars/jamrizzi/sooty.svg?style=social&label=Stars)](https://github.com/jamrizzi/sooty)
@@ -37,11 +37,6 @@ npm install --save sooty
 Submit an [issue](https://github.com/jamrizzi/sooty/issues/new)
 
 
-# Screenshots
-
-[Contribute](https://github.com/jamrizzi/sooty/blob/master/CONTRIBUTING.md) a screenshot
-
-
 # Contributing
 
 Review the [guidelines for contributing](https://github.com/jamrizzi/sooty/blob/master/CONTRIBUTING.md)
@@ -66,7 +61,7 @@ Review the [changelog](https://github.com/jamrizzi/sooty/blob/master/CHANGELOG.m
 
 # Support on Beerpay
 
-A ridiculous amount of coffee :coffee: :coffee: :coffee: was consumed in the process of building this project.
+A ridiculous amount of coffee ☕ ☕ ☕ was consumed in the process of building this project.
 
 [Add some fuel](https://beerpay.io/jamrizzi/sooty) if you'd like to keep me going!
 

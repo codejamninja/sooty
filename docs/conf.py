@@ -20,7 +20,7 @@ html_theme = 'sphinx_rtd_theme'
 
 htmlhelp_basename = 'sootydoc'
 
-js_source_path = './src'
+js_source_path = '../src'
 
 language = None
 
@@ -29,7 +29,7 @@ master_doc = 'index'
 latex_documents = [(
     master_doc,
     'sooty.tex',
-    'sooty Documentation',
+    'Sooty Documentation',
     'Jam Risser',
     'manual'
 )]
@@ -44,7 +44,7 @@ latex_elements = {
 man_pages = [(
     master_doc,
     'sooty',
-    'sooty Documentation',
+    'Sooty Documentation',
     [author],
     1
 )]
@@ -70,7 +70,7 @@ templates_path = ['_templates']
 texinfo_documents = [(
     master_doc,
     'sooty',
-    'sooty Documentation',
+    'Sooty Documentation',
     author,
     'sooty',
     'A bit of oofle dust to scrape websites',
