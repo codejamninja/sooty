@@ -22,6 +22,7 @@ export default class Sooty {
   async run() {
     try {
       this._status = WORKING;
+
       await this.validate();
       await Promise.mapSeries(_.keys(this.config), async key => {
         const groupConfig = this.config[key];
