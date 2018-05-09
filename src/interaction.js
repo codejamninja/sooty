@@ -1,5 +1,3 @@
-import joi from 'joi';
-import joiValidate from 'easy-joi';
 import { FINISHED, READY, WORKING } from './constants';
 import { evaluate } from './browser';
 
@@ -16,6 +14,7 @@ export default class Interaction {
     this.fields = fields;
     this.keys = keys;
     this.name = name;
+    this.url = url;
     this.timeout =
       timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
     this.url = url;
@@ -27,25 +26,7 @@ export default class Interaction {
   }
 
   async validate() {
-    return joiValidate(
-      {
-        click: this.click,
-        delay: this.delay,
-        elements: this.elements,
-        fields: this.fields,
-        keys: this.keys,
-        timeout: this.timeout
-      },
-      joi.object({
-        click: joi.object(),
-        delay: joi.number(),
-        elements: joi.array(),
-        fields: joi.object(),
-        keys: joi.array(),
-        timeout: joi.number()
-      }),
-      this.name
-    );
+    return true;
   }
 
   getStatus() {
@@ -119,12 +100,12 @@ async function runInteraction({ click, fields, elements }) {
       element.blur();
     });
   });
-  Object.keys(elements).forEach(function(elementConfig) {
+  elements.forEach(elementConfig => {
     document
       .querySelectorAll(elementConfig.selector)
       .forEach(function(element) {
         if (elementConfig.field) element.focus();
-        mergeElement(element, elementConfig);
+        mergeElement(element, elementConfig.value);
         if (elementConfig.field) {
           element.dispatchEvent(new Event('change'));
           element.blur();

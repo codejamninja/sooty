@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import joi from 'joi';
-import joiValidate from 'easy-joi';
 import newRegExp from 'newregexp';
 import { evaluate } from './browser';
 import { FINISHED, READY, WAITING, WORKING } from './constants';
@@ -15,9 +13,10 @@ export default class Query {
     this.filter = filter;
     this.html = html;
     this.name = name;
-    this.result = null;
+    this.result = [];
     this.scraped = null;
     this.selector = selector;
+    this.url = url;
     if (_.isString(requires)) {
       this.requires = [requires];
     } else {
@@ -51,12 +50,12 @@ export default class Query {
   }
 
   async run() {
-    await this.scrape();
-    await this.filter();
+    await this.runScrape();
+    await this.runFilter();
     return this.result;
   }
 
-  async scrape() {
+  async runScrape() {
     this._status = WORKING;
     const { result } = await evaluate(this.url, scrapeQuery, {
       html: this.html,
@@ -67,7 +66,7 @@ export default class Query {
     return this.scraped;
   }
 
-  async filter() {
+  async runFilter() {
     _.each(this.scraped, value => {
       if (this.filter) {
         value = (value.match(newRegExp(this.filter)) || []).join('');
@@ -86,26 +85,7 @@ export default class Query {
   }
 
   async validate() {
-    return joiValidate(
-      {
-        filter: this.filter || '',
-        html: this.html,
-        replace: this.replace || '',
-        requires: this.requires,
-        selector: this.selector
-      },
-      joi.object({
-        filter: joi.string(),
-        html: joi.boolean().required(),
-        replace: joi.object({
-          match: joi.string().required(),
-          value: joi.string().required()
-        }),
-        requires: joi.array(),
-        selector: joi.string().required()
-      }),
-      this.name
-    );
+    return true;
   }
 }
 

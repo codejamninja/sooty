@@ -1,7 +1,5 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
-import joi from 'joi';
-import joiValidate from 'easy-joi';
 import Interaction from './interaction';
 import Query from './query';
 import { FINISHED, READY, WORKING } from './constants';
@@ -28,49 +26,48 @@ export default class Group {
   }
 
   async continueScraping() {
-    return Promise.mapSeries(
-      _.keys(this.queries, async key => {
-        const query = this.queries[key];
-        if (query.getStatus(this.finishedInteractions) === READY) {
-          await query.run();
-          this.results[query.name] = query.result;
-        }
-      })
-    );
+    const queryKeys = _.keys(this.queries);
+    if (!queryKeys.length) return null;
+    return Promise.mapSeries(queryKeys, async key => {
+      const query = this.queries[key];
+      if (query.getStatus(this.finishedInteractions) === READY) {
+        await query.run();
+        this.results[query.name] = query.result;
+      }
+    });
   }
 
   async run() {
     this._status = WORKING;
-    await Promise.mapSeries(this.interactions, interaction => {
-      return interaction.init();
-    });
-    await Promise.mapSeries(this.queries, query => {
-      return query.init();
-    });
+    const interactionKeys = _.keys(this.interactions);
+    const queryKeys = _.keys(this.queries);
+    if (interactionKeys.length) {
+      await Promise.mapSeries(interactionKeys, key => {
+        const interaction = this.interactions[key];
+        return interaction.init();
+      });
+    }
+    if (queryKeys.length) {
+      await Promise.mapSeries(queryKeys, async key => {
+        const query = this.queries[key];
+        const done = await query.init();
+        return done;
+      });
+    }
     await this.continueScraping();
-    await Promise.mapSeries(_.keys(this.interactions), async key => {
-      const interaction = this.interactions[key];
-      await interaction.run();
-      this.finishedInteractions.push(interaction.name);
-      await this.continueScraping();
-    });
+    if (interactionKeys.length) {
+      await Promise.mapSeries(interactionKeys, async key => {
+        const interaction = this.interactions[key];
+        await interaction.run();
+        this.finishedInteractions.push(interaction.name);
+        await this.continueScraping();
+      });
+    }
     this._status = FINISHED;
     return this.results;
   }
 
   async validate() {
-    return joiValidate(
-      {
-        interactions: this.interactions,
-        queries: this.queries,
-        url: this.url
-      },
-      joi.object({
-        interactions: joi.object(),
-        queries: joi.object(),
-        url: joi.string().required()
-      }),
-      this.name
-    );
+    return true;
   }
 }

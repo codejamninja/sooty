@@ -1,7 +1,5 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
-import joi from 'joi';
-import joiValidate from 'easy-joi';
 import Group from './group';
 import { FINISHED, WORKING, READY } from './constants';
 import { closeBrowser } from './browser';
@@ -22,7 +20,6 @@ export default class Sooty {
   async run() {
     try {
       this._status = WORKING;
-
       await this.validate();
       await Promise.mapSeries(_.keys(this.config), async key => {
         const groupConfig = this.config[key];
@@ -46,6 +43,6 @@ export default class Sooty {
       this.format = 'single';
       this.config = { config: this.config };
     }
-    return joiValidate(this.config, joi.object().required(), 'config');
+    return true;
   }
 }
