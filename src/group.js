@@ -1,11 +1,15 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
+import joi from 'joi';
+import joiValidate from 'easy-joi';
 import Interaction from './interaction';
 import Query from './query';
 import { FINISHED, READY, WORKING } from './constants';
 
 export default class Group {
-  constructor(name, { interactions = {}, queries = {}, url }) {
+  constructor(name, config = {}) {
+    const { interactions = {}, queries = {}, url } = config;
+    this.config = config;
     this._status = READY;
     this.finishedInteractions = [];
     this.interactions = {};
@@ -68,6 +72,14 @@ export default class Group {
   }
 
   async validate() {
+    await joiValidate(
+      this.config,
+      joi.object().keys({
+        url: joi.string(),
+        interactions: joi.object().optional(),
+        queries: joi.object().optional()
+      })
+    );
     return true;
   }
 }

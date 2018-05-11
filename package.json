@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/jamrizzi/sooty",
   "author": {
@@ -13,7 +13,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "npm run clean && babel src -d lib",
+    "build": "npm run clean && npm run lint && babel src -d lib",
     "clean": "rm -rf lib",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
@@ -56,7 +56,8 @@
     "node": ">= 4.0.0"
   },
   "eslintIgnore": [
-    "lib"
+    "lib",
+    "docs"
   ],
   "jest": {
     "testMatch": "**/tests/**/*.js"

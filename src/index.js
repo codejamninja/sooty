@@ -1,5 +1,7 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
+import joi from 'joi';
+import joiValidate from 'easy-joi';
 import Group from './group';
 import { FINISHED, WORKING, READY } from './constants';
 import { closeBrowser } from './browser';
@@ -7,10 +9,18 @@ import { closeBrowser } from './browser';
 export default class Sooty {
   constructor(config) {
     this._status = READY;
-    this.config = config;
     this.format = 'multiple';
+    this.config = this.loadConfig(config);
     this.groups = {};
     this.results = {};
+  }
+
+  loadConfig(config) {
+    if (_.includes(_.keys(config), 'url') && _.isString(config.url)) {
+      this.format = 'single';
+      config = { config };
+    }
+    return config;
   }
 
   getStatus() {
@@ -39,10 +49,7 @@ export default class Sooty {
   }
 
   async validate() {
-    if (_.includes(_.keys(this.config), 'url') && _.isString(this.config.url)) {
-      this.format = 'single';
-      this.config = { config: this.config };
-    }
+    await joiValidate(this.config, joi.object());
     return true;
   }
 }

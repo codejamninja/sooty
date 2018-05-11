@@ -1,0 +1,30 @@
+group1:
+  url: ""
+  interactions:
+    interaction1:
+      click:
+        - ".someClass"
+        - "#someId"
+      delay: 4000
+      elements:
+        - selector: ".someClass"
+          value: someValue
+        - selector: "#someId"
+          value: someValue
+      fields:
+        field1: someValue
+        field2: someValue
+      keys:
+        - H
+        - G
+      timeout: 4000
+  queries:
+    query1:
+      filter: someRegex
+      html: true
+      replace:
+        match: someRegex
+        value: SomeValue
+      requires:
+        - interaction1
+      selector: "someClass"

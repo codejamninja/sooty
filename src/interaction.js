@@ -1,13 +1,20 @@
+import joi from 'joi';
+import joiValidate from 'easy-joi';
 import { FINISHED, READY, WORKING } from './constants';
 import { evaluate } from './browser';
 
 export default class Interaction {
-  constructor(
-    name,
-    url,
-    { click, delay, elements = [], fields = {}, keys, timeout }
-  ) {
+  constructor(name, url, config) {
     this._status = READY;
+    this.config = this.loadConfig(config);
+    const {
+      click,
+      delay,
+      elements = [],
+      fields = {},
+      keys,
+      timeout
+    } = this.config;
     this.click = click;
     this.delay = delay;
     this.elements = elements;
@@ -21,11 +28,30 @@ export default class Interaction {
     this.waitUntil = timeout ? 'networkidle' : 'load';
   }
 
+  loadConfig({ click, delay, elements, fields, key, keys = [], timeout }) {
+    if (key) keys.push(key);
+    return { click, delay, elements, fields, keys, timeout };
+  }
+
   async init() {
     return this.validate();
   }
 
   async validate() {
+    await joiValidate(this.config, {
+      click: joi
+        .array()
+        .keys(joi.string())
+        .optional(),
+      delay: joi.number().optional(),
+      elements: joi.array().optional(),
+      fields: joi.object().optional(),
+      keys: joi
+        .array()
+        .items(joi.string())
+        .optional(),
+      timeout: joi.number().optional()
+    });
     return true;
   }
 

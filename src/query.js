@@ -1,15 +1,21 @@
 import _ from 'lodash';
+import joi from 'joi';
+import joiValidate from 'easy-joi';
 import newRegExp from 'newregexp';
 import { evaluate } from './browser';
 import { FINISHED, READY, WAITING, WORKING } from './constants';
 
 export default class Query {
-  constructor(
-    name,
-    url,
-    { filter, html = false, replace, requires = [], selector }
-  ) {
+  constructor(name, url, config) {
     this._status = WAITING;
+    this.config = this.loadConfig(config);
+    const {
+      filter,
+      html = false,
+      replace,
+      requires = [],
+      selector
+    } = this.config;
     this.filter = filter;
     this.html = html;
     this.name = name;
@@ -17,19 +23,29 @@ export default class Query {
     this.scraped = null;
     this.selector = selector;
     this.url = url;
-    if (_.isString(requires)) {
-      this.requires = [requires];
-    } else {
-      this.requires = requires;
-    }
-    if (_.isString(replace)) {
-      this.replace = {
-        match: replace,
-        value: ''
-      };
-    } else {
-      this.replace = replace;
-    }
+    this.requires = requires;
+    this.replace = replace;
+  }
+
+  loadConfig({ filter, html, replace, requires, selector }) {
+    if (filter && !_.isArray(filter)) filter = [filter];
+    if (replace && !_.isArray(replace)) replace = [replace];
+    replace = _.map(replace, item => {
+      if (_.isString(item)) {
+        return {
+          match: item,
+          value: ''
+        };
+      }
+      return item;
+    });
+    return {
+      filter,
+      html,
+      replace,
+      requires,
+      selector
+    };
   }
 
   getStatus(finishedInteractions = []) {
@@ -69,22 +85,42 @@ export default class Query {
   async runFilter() {
     _.each(this.scraped, value => {
       if (this.filter) {
-        value = (value.match(newRegExp(this.filter)) || []).join('');
+        _.each(this.filter, filter => {
+          value = (value.match(newRegExp(filter)) || []).join('');
+        });
       }
       if (this.replace) {
-        value = value.replace(
-          newRegExp(this.replace.match),
-          this.replace.value
-        );
+        _.each(this.replace, replace => {
+          value = value.replace(newRegExp(replace.match), replace.value);
+        });
       }
-      if (value && value.length > 0) {
-        this.result.push(value);
-      }
+      if (value && value.length > 0) this.result.push(value);
     });
     return this.result;
   }
 
   async validate() {
+    await joiValidate(this.config, {
+      filter: joi
+        .array()
+        .items(joi.string())
+        .optional(),
+      html: joi.boolean().optional(),
+      replace: joi
+        .array()
+        .items(
+          joi.object().keys({
+            match: joi.string(),
+            value: joi.string().allow('')
+          })
+        )
+        .optional(),
+      requires: joi
+        .array()
+        .items(joi.string())
+        .optional(),
+      selector: joi.string()
+    });
     return true;
   }
 }
