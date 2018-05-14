@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/jamrizzi/sooty",
   "author": {
@@ -22,6 +22,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "easy-joi": "0.0.2",
+    "fs-extra": "^6.0.1",
     "joi": "^13.1.2",
     "lodash": "^4.17.5",
     "newregexp": "0.0.1",
