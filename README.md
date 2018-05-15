@@ -32,7 +32,23 @@ npm install --save sooty
 
 ## Usage
 
-[Contribute](https://github.com/jamrizzi/sooty/blob/master/CONTRIBUTING.md) usage docs
+```js
+import Sooty from 'sooty';
+
+const scrapper = new Sooty({
+  url: 'https://google.com',             // go to google search page
+  interactions: {
+    searchCatVideos: {
+      fields: { q: 'funny cat videos' }, // fill out 'q' fields
+      key: 'Enter'                       // press enter key
+    }
+  }
+});
+
+scrapper.run().then((results) => {
+  console.log('results', results);
+});
+```
 
 
 ## Support
