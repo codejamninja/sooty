@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/jamrizzi/sooty",
   "author": {
@@ -13,8 +13,10 @@
     "lib"
   ],
   "scripts": {
-    "build": "npm run clean && npm run lint && babel src -d lib",
-    "clean": "rm -rf lib",
+    "build": "npm run clean && npm run lint && npm run build:lib && npm run build:scripts",
+    "build:lib": "babel src --ignore src/scripts -d lib",
+    "build:scripts": "parcel build src/scripts/index.js -d lib -o scripts.js",
+    "clean": "rm -rf lib .cache",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
     "prepublish": "npm run build"
@@ -23,6 +25,8 @@
     "bluebird": "^3.5.1",
     "easy-joi": "0.0.2",
     "fs-extra": "^6.0.1",
+    "idempotent-babel-polyfill": "^0.1.1",
+    "isomorphic-dom": "0.0.2",
     "joi": "^13.1.2",
     "lodash": "^4.17.5",
     "newregexp": "0.0.1",
@@ -36,7 +40,8 @@
     "eslint": "^4.18.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-import": "^2.9.0"
+    "eslint-plugin-import": "^2.9.0",
+    "parcel-bundler": "^1.8.1"
   },
   "license": "MIT",
   "repository": "https://github.com/jamrizzi/sooty",
@@ -58,7 +63,8 @@
   },
   "eslintIgnore": [
     "lib",
-    "docs"
+    "docs",
+    ".cache"
   ],
   "jest": {
     "testMatch": "**/tests/**/*.js"

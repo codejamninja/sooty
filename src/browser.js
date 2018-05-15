@@ -1,6 +1,9 @@
 import puppeteer from 'puppeteer';
+import fs from 'fs-extra';
+import path from 'path';
 
 let browser = null;
+const pages = {};
 
 export async function evaluate(url, pageFunction, context = {}) {
   if (!browser) {
@@ -10,10 +13,20 @@ export async function evaluate(url, pageFunction, context = {}) {
       ignoreHTTPSErrors: false
     });
   }
-  const page = await browser.newPage();
-  // eslint-disable-next-line no-console
-  page.on('console', message => console.log(message));
-  await page.goto(url);
+  let page = pages[url];
+  if (!page) {
+    page = await browser.newPage();
+    pages[url] = page;
+    // eslint-disable-next-line no-console
+    page.on('console', message => console.log(message));
+    await page.goto(url);
+    const scripts = fs.readFileSync(
+      path.resolve(__dirname, 'scripts.js'),
+      'utf8'
+    );
+    // eslint-disable-next-line no-new-func
+    await page.evaluate(new Function(scripts));
+  }
   const result = await page.evaluate(pageFunction, context);
   return { page, result };
 }

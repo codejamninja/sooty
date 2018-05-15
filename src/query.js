@@ -125,11 +125,7 @@ export default class Query {
   }
 }
 
-/* eslint-disable prefer-arrow-callback,func-names,no-var,no-undef */
-function scrapeQuery({ html, selector }) {
-  var results = [];
-  document.querySelectorAll(selector).forEach(function(element) {
-    results.push(html ? element.innerHTML : element.innerText);
-  });
-  return results;
+function scrapeQuery(args) {
+  // eslint-disable-next-line no-undef
+  return window.sooty.scrapeQuery(args);
 }

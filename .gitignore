@@ -41,6 +41,7 @@ node_modules
 .idea/
 
 # Application
+/.cache
 /lib
 /env
 /docs/build
