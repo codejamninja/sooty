@@ -1,3 +1,4 @@
+import Promise from 'bluebird';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import joi from 'joi';
@@ -10,62 +11,51 @@ export default class Interaction {
   constructor(name, url, config) {
     this._status = READY;
     this.config = this.loadConfig(config);
-    const {
-      click,
-      delay,
-      elements = [],
-      fields = {},
-      keys,
-      scripts,
-      scroll,
-      timeout
-    } = this.config;
-    this.click = click;
-    this.delay = delay;
-    this.elements = elements;
-    this.fields = fields;
-    this.keys = keys;
+    const { steps } = this.config;
+    this.steps = steps;
     this.name = name;
     this.url = url;
-    this.scripts = scripts;
-    this.scroll = scroll;
-    this.timeout =
-      timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
-    this.url = url;
-    this.waitUntil = timeout ? 'networkidle' : 'load';
   }
 
-  loadConfig({
-    click,
-    delay,
-    elements,
-    fields,
-    key,
-    keys = [],
-    script,
-    scripts = [],
-    scroll,
-    timeout
-  }) {
-    if (key) keys.push(key);
-    if (script) scripts.push(script);
-    scripts = _.map(scripts, script => {
-      if (/[\w\s_\-.\/\\]+/g.text(script)) {
-        try {
-          return fs.readFileSync(path.resolve(script), 'utf8');
-        } catch (err) {
-          return '';
+  loadConfig(steps) {
+    if (!_.isArray(steps)) steps = [steps];
+    steps = _.map(steps, step => {
+      const { click, delay, elements, fields, key, keys = [], script } = step;
+      let { scripts = [], scroll, timeout } = step;
+      timeout =
+        timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
+      const waitUntil = timeout ? 'networkidle' : 'load';
+      if (key) keys.push(key);
+      if (script) scripts.push(script);
+      scripts = _.map(scripts, script => {
+        if (/[\w\s_\-.\/\\]+/g.text(script)) {
+          try {
+            return fs.readFileSync(path.resolve(script), 'utf8');
+          } catch (err) {
+            return '';
+          }
         }
+        return script;
+      });
+      if (_.isNumber(scroll)) {
+        scroll = {
+          count: scroll,
+          timeout: 10000
+        };
       }
-      return script;
-    });
-    if (_.isNumber(scroll)) {
-      scroll = {
-        count: scroll,
-        timeout: 10000
+      return {
+        click,
+        delay,
+        elements,
+        fields,
+        keys,
+        scripts,
+        scroll,
+        timeout,
+        waitUntil
       };
-    }
-    return { click, delay, elements, fields, keys, scripts, scroll, timeout };
+    });
+    return { steps };
   }
 
   async init() {
@@ -74,29 +64,34 @@ export default class Interaction {
 
   async validate() {
     await joiValidate(this.config, {
-      click: joi
-        .array()
-        .keys(joi.string())
-        .optional(),
-      delay: joi.number().optional(),
-      elements: joi.array().optional(),
-      fields: joi.object().optional(),
-      keys: joi
-        .array()
-        .items(joi.string())
-        .optional(),
-      scripts: joi
-        .array()
-        .items(joi.string())
-        .optional(),
-      scroll: joi
-        .object()
-        .keys({
-          count: joi.number(),
-          timeout: joi.number()
+      steps: joi.array().items(
+        joi.object().keys({
+          click: joi
+            .array()
+            .keys(joi.string())
+            .optional(),
+          delay: joi.number().optional(),
+          elements: joi.array().optional(),
+          fields: joi.object().optional(),
+          keys: joi
+            .array()
+            .items(joi.string())
+            .optional(),
+          scripts: joi
+            .array()
+            .items(joi.string())
+            .optional(),
+          scroll: joi
+            .object()
+            .keys({
+              count: joi.number(),
+              timeout: joi.number()
+            })
+            .optional(),
+          timeout: joi.number(),
+          waitUntil: joi.string()
         })
-        .optional(),
-      timeout: joi.number().optional()
+      )
     });
     return true;
   }
@@ -107,38 +102,42 @@ export default class Interaction {
 
   async run() {
     this._status = WORKING;
-    const { page } = await evaluate(this.url, runInteraction, {
-      click: this.click,
-      elements: this.elements,
-      fields: this.fields,
-      scripts: this.scripts
-    });
-    if (!this.click && !this.keys && this.delay) {
-      await new Promise(r => setTimeout(r, this.delay));
-    }
-    if (this.step.click) {
-      await page
-        .waitForNavigation({
-          timeout: this.delay || 10000,
-          waitUntil: this.waitUntil,
-          networkIdleTimeout: this.timeout
-        })
-        .catch(() => {});
-    }
-    if (this.keys) {
-      await Promise.mapSeries(this.keys, key => {
-        return Promise.mapSeries([
-          page.keyboard.press(key),
-          page
-            .waitForNavigation({
-              timeout: this.delay || 10000,
-              waitUntil: this.waitUntil,
-              networkIdleTimeout: this.timeout
-            })
-            .catch(() => {})
-        ]);
+    await Promise.mapSeries(this.steps, async step => {
+      const { page } = await evaluate(this.url, runInteraction, {
+        click: step.click,
+        elements: step.elements,
+        fields: step.fields,
+        scripts: step.scripts
       });
-    }
+      const waitForPage =
+        step.click || _.includes(step.keys.toLowerCase(), 'enter');
+      if (!waitForPage && step.delay) {
+        await new Promise(r => setTimeout(r, step.delay));
+      }
+      if (waitForPage) {
+        await page
+          .waitForNavigation({
+            timeout: step.delay || 10000,
+            waitUntil: step.waitUntil,
+            networkIdleTimeout: step.timeout
+          })
+          .catch(() => {});
+      }
+      if (this.keys) {
+        await Promise.mapSeries(step.keys, key => {
+          return Promise.mapSeries([
+            page.keyboard.press(key),
+            page
+              .waitForNavigation({
+                timeout: step.delay || 10000,
+                waitUntil: step.waitUntil,
+                networkIdleTimeout: step.timeout
+              })
+              .catch(() => {})
+          ]);
+        });
+      }
+    });
     this._status = FINISHED;
   }
 }
