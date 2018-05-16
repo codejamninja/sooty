@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/jamrizzi/sooty",
   "author": {
@@ -9,10 +9,11 @@
     "url": "https://jam.jamrizzi.com"
   },
   "main": "lib/index.js",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "build":
-      "npm run clean && npm run test && npm run build:lib && npm run build:scripts",
+    "build": "npm run clean && npm run test && npm run build:lib && npm run build:scripts",
     "build:lib": "babel src --ignore src/scripts -d lib",
     "build:scripts": "parcel build src/scripts/index.js -d lib -o scripts.js",
     "clean": "rm -rf lib .cache .tmp && jest --clearCache",
@@ -68,9 +69,16 @@
   "engines": {
     "node": ">= 4.0.0"
   },
-  "eslintIgnore": ["lib", "docs", ".cache", ".tmp"],
+  "eslintIgnore": [
+    "lib",
+    "docs",
+    ".cache",
+    ".tmp"
+  ],
   "jest": {
-    "testMatch": ["**/tests/**/*.js"],
+    "testMatch": [
+      "**/tests/**/*.js"
+    ],
     "verbose": true
   }
 }
