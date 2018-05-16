@@ -8,8 +8,8 @@ import { FINISHED, READY, WORKING } from './constants';
 
 export default class Group {
   constructor(name, config = {}) {
-    const { interactions = {}, queries = {}, url } = config;
-    this.config = config;
+    this.config = this.loadConfig(config);
+    const { interactions = {}, queries = {}, url } = this.config;
     this._status = READY;
     this.finishedInteractions = [];
     this.interactions = {};
@@ -27,6 +27,30 @@ export default class Group {
 
   getStatus() {
     return this._status;
+  }
+
+  loadConfig(config) {
+    if (!config.queries && !config.interactions) {
+      config.interactions = config;
+      delete config.interactions.url;
+    }
+    const { queries, url } = config;
+    let { interactions } = config;
+    if (
+      _.isArray(interactions) ||
+      _.difference(_.keys(interactions), [
+        'click',
+        'delay',
+        'elements',
+        'fields',
+        'key',
+        'keys',
+        'script'
+      ]).length
+    ) {
+      interactions = { interaction: interactions };
+    }
+    return { interactions, queries, url };
   }
 
   async continueScraping() {
