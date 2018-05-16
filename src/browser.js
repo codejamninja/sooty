@@ -12,10 +12,14 @@ export async function evaluate(
   url,
   pageFunction,
   context = {},
-  { debug, debugPath = './.tmp/debug' }
+  options = {}
 ) {
+  const {
+    debug = false,
+    debugPath = path.resolve('.tmp', 'debug'),
+    waitForPage
+  } = options;
   const hash = murmurHash(`${name}=${url}`);
-  debugPath = path.resolve(debugPath);
   if (!browser) {
     browser = await puppeteer.launch({
       executablePath: process.env.CHROME_BIN || null,
@@ -33,8 +37,12 @@ export async function evaluate(
       page,
       ref
     };
-    // eslint-disable-next-line no-console
-    page.on('console', message => console.log(message));
+    page.on('console', message => {
+      // eslint-disable-next-line no-console
+      if (message._type) return console[message._type](message._text);
+      // eslint-disable-next-line no-console
+      return console.log(message);
+    });
     await page.goto(url);
     const scripts = fs.readFileSync(
       path.resolve(__dirname, '../lib/scripts.js'),
@@ -44,6 +52,9 @@ export async function evaluate(
     await page.evaluate(new Function(scripts));
   }
   const result = await page.evaluate(pageFunction, context);
+  if (waitForPage) {
+    await page.waitForNavigation(waitForPage).catch(() => {});
+  }
   const dom = new JSDOM(await page.evaluate(getHTML));
   if (debug) {
     const htmlPath = path.resolve(debugPath, 'html');

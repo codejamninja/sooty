@@ -21,13 +21,23 @@ export default class Interaction {
   loadConfig(steps) {
     if (!_.isArray(steps)) steps = [steps];
     steps = _.map(steps, step => {
-      const { click, delay, elements, fields, key, keys = [], script } = step;
+      const {
+        click,
+        clicks = [],
+        delay,
+        elements,
+        fields,
+        key,
+        keys = [],
+        script
+      } = step;
       let { scripts = [], scroll, timeout } = step;
+      const waitUntil = timeout ? 'networkidle' : 'load';
       timeout =
         timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
-      const waitUntil = timeout ? 'networkidle' : 'load';
       if (key) keys.push(key);
       if (script) scripts.push(script);
+      if (click) clicks.push(click);
       scripts = _.map(scripts, script => {
         if (/^[\w\s_\-.\/\\]+$/g.test(script)) {
           try {
@@ -45,7 +55,7 @@ export default class Interaction {
         };
       }
       return {
-        click,
+        clicks,
         delay,
         elements,
         fields,
@@ -67,7 +77,7 @@ export default class Interaction {
     await joiValidate(this.config, {
       steps: joi.array().items(
         joi.object().keys({
-          click: joi
+          clicks: joi
             .array()
             .items(joi.string())
             .optional(),
@@ -104,32 +114,31 @@ export default class Interaction {
   async run() {
     this._status = WORKING;
     const result = Promise.mapSeries(this.steps, async step => {
+      let waitForPage = null;
+      if (
+        step.clicks.length ||
+        _.includes(_.map(step.keys, key => key.toLowerCase()), 'enter')
+      ) {
+        waitForPage = {
+          timeout: step.delay || 3000,
+          waitUntil: step.waitUntil
+          // networkIdleTimeout: step.timeout
+        };
+      }
       const { dom, page } = await evaluate(
         this.name,
         this.url,
         runInteraction,
         {
-          click: step.click,
+          clicks: step.clicks,
           elements: step.elements,
           fields: step.fields,
           scripts: step.scripts
         },
-        this.options
+        { ...this.options, waitForPage }
       );
-      const waitForPage =
-        step.click ||
-        _.includes(_.map(step.keys, key => key.toLowerCase()), 'enter');
       if (!waitForPage && step.delay) {
         await new Promise(r => setTimeout(r, step.delay));
-      }
-      if (waitForPage) {
-        await page
-          .waitForNavigation({
-            timeout: step.delay || 10000,
-            waitUntil: step.waitUntil,
-            networkIdleTimeout: step.timeout
-          })
-          .catch(() => {});
       }
       if (this.keys) {
         await Promise.mapSeries(step.keys, key => {

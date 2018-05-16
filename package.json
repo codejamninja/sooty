@@ -9,14 +9,13 @@
     "url": "https://jam.jamrizzi.com"
   },
   "main": "lib/index.js",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "scripts": {
-    "build": "npm run clean && npm run test && npm run build:lib && npm run build:scripts",
+    "build":
+      "npm run clean && npm run test && npm run build:lib && npm run build:scripts",
     "build:lib": "babel src --ignore src/scripts -d lib",
     "build:scripts": "parcel build src/scripts/index.js -d lib -o scripts.js",
-    "clean": "rm -rf lib .cache .tmp",
+    "clean": "rm -rf lib .cache .tmp && jest --clearCache",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
     "prepublish": "npm run build",
@@ -69,16 +68,9 @@
   "engines": {
     "node": ">= 4.0.0"
   },
-  "eslintIgnore": [
-    "lib",
-    "docs",
-    ".cache",
-    ".tmp"
-  ],
+  "eslintIgnore": ["lib", "docs", ".cache", ".tmp"],
   "jest": {
-    "testMatch": [
-      "**/tests/**/*.js"
-    ],
+    "testMatch": ["**/tests/**/*.js"],
     "verbose": true
   }
 }

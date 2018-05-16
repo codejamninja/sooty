@@ -51,7 +51,7 @@ describe('new Interaction(name, url, config)', async () => {
     expect(interaction.config).toEqual({
       steps: [
         {
-          click: undefined,
+          clicks: [],
           delay: undefined,
           elements: undefined,
           fields: {
@@ -61,10 +61,10 @@ describe('new Interaction(name, url, config)', async () => {
           scripts: [],
           scroll: undefined,
           timeout: 1000,
-          waitUntil: 'networkidle'
+          waitUntil: 'load'
         },
         {
-          click: undefined,
+          clicks: [],
           delay: undefined,
           elements: undefined,
           fields: undefined,
@@ -72,10 +72,10 @@ describe('new Interaction(name, url, config)', async () => {
           scripts: [],
           scroll: undefined,
           timeout: 1000,
-          waitUntil: 'networkidle'
+          waitUntil: 'load'
         },
         {
-          click: undefined,
+          clicks: [],
           delay: undefined,
           elements: undefined,
           fields: undefined,
@@ -83,7 +83,7 @@ describe('new Interaction(name, url, config)', async () => {
           scripts: ["console.log('Hello, world!')"],
           scroll: undefined,
           timeout: 1000,
-          waitUntil: 'networkidle'
+          waitUntil: 'load'
         }
       ]
     });
@@ -102,7 +102,7 @@ describe('new Interaction(name, url, config)', async () => {
     expect(interaction.config).toEqual({
       steps: [
         {
-          click: undefined,
+          clicks: [],
           delay: undefined,
           elements: undefined,
           fields: {
@@ -112,7 +112,7 @@ describe('new Interaction(name, url, config)', async () => {
           scripts: [],
           scroll: undefined,
           timeout: 1000,
-          waitUntil: 'networkidle'
+          waitUntil: 'load'
         }
       ]
     });
@@ -161,7 +161,7 @@ describe('interaction.validate()', async () => {
 describe('interaction.run()', async () => {
   it('should fill out fields', async () => {
     const interaction = new Interaction(
-      'darthVader',
+      'someInteraction',
       `http://localhost:${config.port}/interactions.html`,
       {
         fields: {
@@ -171,14 +171,27 @@ describe('interaction.run()', async () => {
       },
       { debug: true }
     );
-    const result = await interaction.run();
-    const { dom } = result[0];
+    const [result] = await interaction.run();
+    const { dom } = result;
     expect(dom.window.document.getElementsByName('firstName')[0].value).toBe(
       'Darth'
     );
     expect(dom.window.document.getElementsByName('lastName')[0].value).toBe(
       'Vader'
     );
+  });
+  it('should click buttons', async () => {
+    const interaction = new Interaction(
+      'someInteraction',
+      `http://localhost:${config.port}/interactions.html`,
+      {
+        click: '#submit'
+      },
+      { debug: true }
+    );
+    const [result] = await interaction.run();
+    const { dom } = result;
+    expect(dom.window.document.getElementById('submit')).toBeFalsy();
   });
 });
 

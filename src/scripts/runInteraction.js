@@ -14,7 +14,7 @@ async function scrollToBottom(count, timeout) {
   });
 }
 
-async function runInteraction({ click, elements, fields, scripts, scroll }) {
+async function runInteraction({ clicks, elements, fields, scripts, scroll }) {
   _.each(fields, (field, key) => {
     _.each(window.document.getElementsByName(key), element => {
       element.focus();
@@ -43,18 +43,12 @@ async function runInteraction({ click, elements, fields, scripts, scroll }) {
       }
     });
   });
-  if (click) {
-    if (_.isString(click)) {
+  if (clicks) {
+    _.each(clicks, click => {
       _.each(document.querySelectorAll(click), element => {
         element.click();
       });
-    } else {
-      _.each(click, selector => {
-        _.each(document.querySelectorAll(selector), element => {
-          element.click();
-        });
-      });
-    }
+    });
   }
   if (scroll) await scrollToBottom(scroll.count, scroll.timeout);
   if (scripts) {
