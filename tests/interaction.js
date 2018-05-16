@@ -88,7 +88,6 @@ describe('new Interaction(name, url, config)', async () => {
       ]
     });
   });
-
   it('should guess steps', async () => {
     const interaction = new Interaction(
       'searchCatFunnyVideos',
@@ -140,7 +139,6 @@ describe('interaction.validate()', async () => {
     );
     await interaction.validate();
   });
-
   it('should invalidate', async () => {
     const interaction = new Interaction(
       'searchCatFunnyVideos',
@@ -161,7 +159,7 @@ describe('interaction.validate()', async () => {
 describe('interaction.run()', async () => {
   it('should fill out fields', async () => {
     const interaction = new Interaction(
-      'someInteraction',
+      'someFieldInteraction',
       `http://localhost:${config.port}/interactions.html`,
       {
         fields: {
@@ -182,7 +180,7 @@ describe('interaction.run()', async () => {
   });
   it('should click buttons', async () => {
     const interaction = new Interaction(
-      'someInteraction',
+      'someClickInteraction',
       `http://localhost:${config.port}/interactions.html`,
       {
         click: '#submit'
@@ -192,6 +190,28 @@ describe('interaction.run()', async () => {
     const [result] = await interaction.run();
     const { dom } = result;
     expect(dom.window.document.getElementById('submit')).toBeFalsy();
+  });
+  it('should modify elements', async () => {
+    const interaction = new Interaction(
+      'someElementInteraction',
+      `http://localhost:${config.port}/interactions.html`,
+      {
+        elements: [
+          {
+            selector: '#submit',
+            value: {
+              style: 'background-color:#FF9900'
+            }
+          }
+        ]
+      },
+      { debug: true }
+    );
+    const [result] = await interaction.run();
+    const { dom } = result;
+    expect(
+      dom.window.document.getElementById('submit').style.backgroundColor
+    ).toBe('rgb(255, 153, 0)');
   });
 });
 

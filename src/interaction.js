@@ -82,7 +82,15 @@ export default class Interaction {
             .items(joi.string())
             .optional(),
           delay: joi.number().optional(),
-          elements: joi.array().optional(),
+          elements: joi
+            .array()
+            .items(
+              joi.object().keys({
+                selector: joi.string(),
+                value: joi.any()
+              })
+            )
+            .optional(),
           fields: joi.object().optional(),
           keys: joi
             .array()
