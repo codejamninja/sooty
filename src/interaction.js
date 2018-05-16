@@ -8,8 +8,9 @@ import { FINISHED, READY, WORKING } from './constants';
 import { evaluate } from './browser';
 
 export default class Interaction {
-  constructor(name, url, config) {
+  constructor(name, url, config, options) {
     this._status = READY;
+    this.options = options;
     this.config = this.loadConfig(config);
     const { steps } = this.config;
     this.steps = steps;
@@ -28,7 +29,7 @@ export default class Interaction {
       if (key) keys.push(key);
       if (script) scripts.push(script);
       scripts = _.map(scripts, script => {
-        if (/[\w\s_\-.\/\\]+/g.text(script)) {
+        if (/^[\w\s_\-.\/\\]+$/g.test(script)) {
           try {
             return fs.readFileSync(path.resolve(script), 'utf8');
           } catch (err) {
@@ -68,7 +69,7 @@ export default class Interaction {
         joi.object().keys({
           click: joi
             .array()
-            .keys(joi.string())
+            .items(joi.string())
             .optional(),
           delay: joi.number().optional(),
           elements: joi.array().optional(),
@@ -102,15 +103,22 @@ export default class Interaction {
 
   async run() {
     this._status = WORKING;
-    await Promise.mapSeries(this.steps, async step => {
-      const { page } = await evaluate(this.url, runInteraction, {
-        click: step.click,
-        elements: step.elements,
-        fields: step.fields,
-        scripts: step.scripts
-      });
+    const result = Promise.mapSeries(this.steps, async step => {
+      const { dom, page } = await evaluate(
+        this.name,
+        this.url,
+        runInteraction,
+        {
+          click: step.click,
+          elements: step.elements,
+          fields: step.fields,
+          scripts: step.scripts
+        },
+        this.options
+      );
       const waitForPage =
-        step.click || _.includes(step.keys.toLowerCase(), 'enter');
+        step.click ||
+        _.includes(_.map(step.keys, key => key.toLowerCase()), 'enter');
       if (!waitForPage && step.delay) {
         await new Promise(r => setTimeout(r, step.delay));
       }
@@ -137,8 +145,10 @@ export default class Interaction {
           ]);
         });
       }
+      return { dom, page };
     });
     this._status = FINISHED;
+    return result;
   }
 }
 

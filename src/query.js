@@ -73,7 +73,7 @@ export default class Query {
 
   async runScrape() {
     this._status = WORKING;
-    const { result } = await evaluate(this.url, scrapeQuery, {
+    const { result } = await evaluate(this.name, this.url, scrapeQuery, {
       html: this.html,
       selector: this.selector
     });

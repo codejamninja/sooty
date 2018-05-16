@@ -3,19 +3,6 @@ import { window } from 'isomorphic-dom';
 
 const { document, Event } = window;
 
-function mergeElement(element, config) {
-  _.each(config, (key, configValue) => {
-    let elementValue = element[key];
-    if (Array.isArray(elementValue)) {
-      elementValue = elementValue.concat(configValue);
-    } else if (typeof elementValue === 'object') {
-      Object.assign(elementValue, configValue);
-    } else {
-      elementValue = configValue;
-    }
-  });
-}
-
 async function scrollToBottom(count, timeout) {
   count--;
   return new Promise(resolve => {
@@ -32,11 +19,13 @@ async function runInteraction({ click, elements, fields, scripts, scroll }) {
     _.each(window.document.getElementsByName(key), element => {
       element.focus();
       if (element.type === 'checkbox') {
-        element.checked = !!field;
+        element.setAttribute('checked', !!field);
       } else if (_.isString(field)) {
-        element.value = field;
+        element.setAttribute('value', field);
       } else {
-        mergeElement(element, field);
+        _.each(element.attributes, (attribute, key) => {
+          element.setAttribute(key, _.merge(element[key], field));
+        });
       }
       element.dispatchEvent(new Event('change'));
       element.blur();
@@ -45,7 +34,9 @@ async function runInteraction({ click, elements, fields, scripts, scroll }) {
   _.each(elements, elementConfig => {
     _.each(document.querySelectorAll(elementConfig.selector), element => {
       if (elementConfig.field) element.focus();
-      mergeElement(element, elementConfig.value);
+      _.each(element.attributes, (attribute, key) => {
+        element.setAttribute(key, _.merge(element[key], elementConfig.value));
+      });
       if (elementConfig.field) {
         element.dispatchEvent(new Event('change'));
         element.blur();
@@ -72,6 +63,7 @@ async function runInteraction({ click, elements, fields, scripts, scroll }) {
       eval(script);
     });
   }
+  return true;
 }
 
 window.sooty = {
