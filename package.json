@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/jamrizzi/sooty",
   "author": {
@@ -34,6 +34,7 @@
     "jsdom": "^11.10.0",
     "lodash": "^4.17.5",
     "murmurhash-native": "^3.2.3",
+    "nested-iframe": "^0.1.0",
     "newregexp": "0.0.1",
     "puppeteer": "^1.1.1"
   },

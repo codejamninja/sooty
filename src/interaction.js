@@ -31,13 +31,14 @@ export default class Interaction {
         keys = [],
         script
       } = step;
-      let { scripts = [], scroll, timeout } = step;
+      let { iframe = [], scripts = [], scroll, timeout } = step;
       const waitUntil = timeout ? 'networkidle' : 'load';
       timeout =
         timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
       if (key) keys.push(key);
       if (script) scripts.push(script);
       if (click) clicks.push(click);
+      if (!_.isArray(iframe)) iframe = [iframe];
       scripts = _.map(scripts, script => {
         if (/^[\w\s_\-.\/\\]+$/g.test(script)) {
           try {
@@ -59,6 +60,7 @@ export default class Interaction {
         delay,
         elements,
         fields,
+        iframe,
         keys,
         scripts,
         scroll,
@@ -92,6 +94,7 @@ export default class Interaction {
             )
             .optional(),
           fields: joi.object().optional(),
+          iframe: joi.array().items(joi.string()),
           keys: joi
             .array()
             .items(joi.string())
@@ -141,6 +144,7 @@ export default class Interaction {
           clicks: step.clicks,
           elements: step.elements,
           fields: step.fields,
+          iframe: step.iframe,
           scripts: step.scripts
         },
         { ...this.options, waitForPage }

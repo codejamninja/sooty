@@ -57,6 +57,7 @@ describe('new Interaction(name, url, config)', async () => {
           fields: {
             q: 'funny cat videos'
           },
+          iframe: [],
           keys: [],
           scripts: [],
           scroll: undefined,
@@ -68,6 +69,7 @@ describe('new Interaction(name, url, config)', async () => {
           delay: undefined,
           elements: undefined,
           fields: undefined,
+          iframe: [],
           keys: ['Enter'],
           scripts: [],
           scroll: undefined,
@@ -79,6 +81,7 @@ describe('new Interaction(name, url, config)', async () => {
           delay: undefined,
           elements: undefined,
           fields: undefined,
+          iframe: [],
           keys: [],
           scripts: ["console.log('Hello, world!')"],
           scroll: undefined,
@@ -107,6 +110,7 @@ describe('new Interaction(name, url, config)', async () => {
           fields: {
             q: 'funny cat videos'
           },
+          iframe: [],
           keys: [],
           scripts: [],
           scroll: undefined,

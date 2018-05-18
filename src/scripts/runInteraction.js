@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { window } from 'isomorphic-dom';
+import nestedIframe from 'nested-iframe';
 
 const { document, Event } = window;
 
@@ -14,9 +15,19 @@ async function scrollToBottom(count, timeout) {
   });
 }
 
-async function runInteraction({ clicks, elements, fields, scripts, scroll }) {
+async function runInteraction({
+  clicks,
+  elements,
+  fields,
+  scripts,
+  scroll,
+  iframe
+}) {
+  const { contentDocument } = nestedIframe(iframe) || {
+    contentDocument: document
+  };
   _.each(fields, (field, key) => {
-    _.each(window.document.getElementsByName(key), element => {
+    _.each(contentDocument.getElementsByName(key), element => {
       element.focus();
       if (element.type === 'checkbox') {
         element.setAttribute('checked', !!field);
@@ -36,24 +47,27 @@ async function runInteraction({ clicks, elements, fields, scripts, scroll }) {
     });
   });
   _.each(elements, elementConfig => {
-    _.each(document.querySelectorAll(elementConfig.selector), element => {
-      if (elementConfig.field) element.focus();
-      _.each(elementConfig.value, (value, key) => {
-        if (_.isObjectLike(value)) {
-          element[key] = _.merge(element[key], value);
-        } else {
-          element.setAttribute(key, value);
+    _.each(
+      contentDocument.querySelectorAll(elementConfig.selector),
+      element => {
+        if (elementConfig.field) element.focus();
+        _.each(elementConfig.value, (value, key) => {
+          if (_.isObjectLike(value)) {
+            element[key] = _.merge(element[key], value);
+          } else {
+            element.setAttribute(key, value);
+          }
+        });
+        if (elementConfig.field) {
+          element.dispatchEvent(new Event('change'));
+          element.blur();
         }
-      });
-      if (elementConfig.field) {
-        element.dispatchEvent(new Event('change'));
-        element.blur();
       }
-    });
+    );
   });
   if (clicks) {
     _.each(clicks, click => {
-      _.each(document.querySelectorAll(click), element => {
+      _.each(contentDocument.querySelectorAll(click), element => {
         element.click();
       });
     });

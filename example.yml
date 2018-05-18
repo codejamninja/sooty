@@ -20,6 +20,7 @@ group1:
       timeout: 4000
   queries:
     query1:
+      iframe: blabla
       filter: someRegex
       html: true
       replace:

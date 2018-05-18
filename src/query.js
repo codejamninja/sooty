@@ -9,15 +9,10 @@ export default class Query {
   constructor(name, url, config) {
     this._status = WAITING;
     this.config = this.loadConfig(config);
-    const {
-      filter,
-      html = false,
-      replace,
-      requires = [],
-      selector
-    } = this.config;
+    const { filter, html, iframe, replace, requires, selector } = this.config;
     this.filter = filter;
     this.html = html;
+    this.iframe = iframe;
     this.name = name;
     this.result = [];
     this.scraped = null;
@@ -27,8 +22,16 @@ export default class Query {
     this.replace = replace;
   }
 
-  loadConfig({ filter, html, replace, requires, selector }) {
+  loadConfig({
+    filter,
+    html = false,
+    iframe = [],
+    replace,
+    requires = [],
+    selector
+  }) {
     if (filter && !_.isArray(filter)) filter = [filter];
+    if (!_.isArray(iframe)) iframe = [iframe];
     if (replace && !_.isArray(replace)) replace = [replace];
     replace = _.map(replace, item => {
       if (_.isString(item)) {
@@ -42,6 +45,7 @@ export default class Query {
     return {
       filter,
       html,
+      iframe,
       replace,
       requires,
       selector
@@ -75,6 +79,7 @@ export default class Query {
     this._status = WORKING;
     const { result } = await evaluate(this.name, this.url, scrapeQuery, {
       html: this.html,
+      iframe: this.iframe,
       selector: this.selector
     });
     this.scraped = result;
@@ -106,6 +111,7 @@ export default class Query {
         .items(joi.string())
         .optional(),
       html: joi.boolean().optional(),
+      iframe: joi.array().items(joi.string()),
       replace: joi
         .array()
         .items(
