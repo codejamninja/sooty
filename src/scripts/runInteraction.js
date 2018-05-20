@@ -23,7 +23,7 @@ async function runInteraction({
   scroll,
   iframe
 }) {
-  const { contentDocument } = nestedIframe(iframe) || {
+  const { contentDocument } = (await nestedIframe(iframe)) || {
     contentDocument: document
   };
   _.each(fields, (field, key) => {

@@ -43,6 +43,7 @@ export default class Group {
         'delay',
         'elements',
         'fields',
+        'iframe',
         'key',
         'keys',
         'script'

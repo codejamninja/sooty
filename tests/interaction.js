@@ -217,6 +217,25 @@ describe('interaction.run()', async () => {
       dom.window.document.getElementById('submit').style.backgroundColor
     ).toBe('rgb(255, 153, 0)');
   });
+  it('should work with iframes', async () => {
+    const interaction = new Interaction(
+      'someIframeInteraction',
+      `http://localhost:${config.port}/interactions.html`,
+      {
+        iframe: '#iframe',
+        elements: [
+          {
+            selector: 'h1',
+            value: {
+              style: 'color:red'
+            }
+          }
+        ]
+      },
+      { debug: true }
+    );
+    await interaction.run();
+  });
 });
 
 async function getConfig(config) {
