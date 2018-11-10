@@ -132,6 +132,5 @@ export default class Query {
 }
 
 function scrapeQuery(args) {
-  // eslint-disable-next-line no-undef
   return window.sooty.scrapeQuery(args);
 }

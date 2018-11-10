@@ -75,7 +75,6 @@ async function runInteraction({
   if (scroll) await scrollToBottom(scroll.count, scroll.timeout);
   if (scripts) {
     _.each(scripts, script => {
-      // eslint-disable-next-line no-eval
       eval(script);
     });
   }

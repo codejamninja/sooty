@@ -74,7 +74,6 @@ export async function evaluate(
 }
 
 function getHTML() {
-  // eslint-disable-next-line no-undef
   return document.documentElement.innerHTML;
 }
 

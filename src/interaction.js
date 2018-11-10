@@ -29,18 +29,16 @@ export default class Interaction {
         fields,
         key,
         keys = [],
-        script
+        script,
+        waitUntil = 'load'
       } = step;
-      let { iframe = [], scripts = [], scroll, timeout } = step;
-      const waitUntil = timeout ? 'networkidle' : 'load';
-      timeout =
-        timeout !== true && Number(timeout) > 0 ? Number(timeout) : 1000;
+      let { iframe = [], scripts = [], scroll } = step;
+      if (click) clicks.push(click);
       if (key) keys.push(key);
       if (script) scripts.push(script);
-      if (click) clicks.push(click);
       if (!_.isArray(iframe)) iframe = [iframe];
       scripts = _.map(scripts, script => {
-        if (/^[\w\s_\-.\/\\]+$/g.test(script)) {
+        if (/^[\w\s_\-./\\]+$/g.test(script)) {
           try {
             return fs.readFileSync(path.resolve(script), 'utf8');
           } catch (err) {
@@ -64,7 +62,6 @@ export default class Interaction {
         keys,
         scripts,
         scroll,
-        timeout,
         waitUntil
       };
     });
@@ -95,10 +92,7 @@ export default class Interaction {
             .optional(),
           fields: joi.object().optional(),
           iframe: joi.array().items(joi.string()),
-          keys: joi
-            .array()
-            .items(joi.string())
-            .optional(),
+          keys: joi.array(),
           scripts: joi
             .array()
             .items(joi.string())
@@ -133,7 +127,6 @@ export default class Interaction {
         waitForPage = {
           timeout: step.delay || 3000,
           waitUntil: step.waitUntil
-          // networkIdleTimeout: step.timeout
         };
       }
       const { dom, page } = await evaluate(
@@ -156,11 +149,13 @@ export default class Interaction {
         await Promise.mapSeries(step.keys, key => {
           return Promise.mapSeries([
             page.keyboard.press(key),
+            _.isArray(key) && key.length >= 2
+              ? page.keyboard[key[0]](key[1])
+              : page.keyboard.type(key),
             page
               .waitForNavigation({
                 timeout: step.delay || 10000,
-                waitUntil: step.waitUntil,
-                networkIdleTimeout: step.timeout
+                waitUntil: step.waitUntil
               })
               .catch(() => {})
           ]);
@@ -174,6 +169,5 @@ export default class Interaction {
 }
 
 function runInteraction(args) {
-  // eslint-disable-next-line no-undef
   return window.sooty.runInteraction(args);
 }

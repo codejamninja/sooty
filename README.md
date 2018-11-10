@@ -2,9 +2,9 @@
 
 # sooty
 
-[![Beerpay](https://beerpay.io/jamrizzi/sooty/badge.svg?style=beer-square)](https://beerpay.io/jamrizzi/sooty)
-[![Beerpay](https://beerpay.io/jamrizzi/sooty/make-wish.svg?style=flat-square)](https://beerpay.io/jamrizzi/sooty?focus=wish)
-[![GitHub stars](https://img.shields.io/github/stars/jamrizzi/sooty.svg?style=social&label=Stars)](https://github.com/jamrizzi/sooty)
+[![Beerpay](https://beerpay.io/codejamninja/sooty/badge.svg?style=beer-square)](https://beerpay.io/codejamninja/sooty)
+[![Beerpay](https://beerpay.io/codejamninja/sooty/make-wish.svg?style=flat-square)](https://beerpay.io/codejamninja/sooty?focus=wish)
+[![GitHub stars](https://img.shields.io/github/stars/codejamninja/sooty.svg?style=social&label=Stars)](https://github.com/codejamninja/sooty)
 
 > A bit of oofle dust to scrape websites
 
@@ -53,41 +53,41 @@ scrapper.run().then((results) => {
 
 ## Support
 
-Submit an [issue](https://github.com/jamrizzi/sooty/issues/new)
+Submit an [issue](https://github.com/codejamninja/sooty/issues/new)
 
 
 ## Screenshots
 
-[Contribute](https://github.com/jamrizzi/sooty/blob/master/CONTRIBUTING.md) a screenshot
+[Contribute](https://github.com/codejamninja/sooty/blob/master/CONTRIBUTING.md) a screenshot
 
 
 ## Contributing
 
-Review the [guidelines for contributing](https://github.com/jamrizzi/sooty/blob/master/CONTRIBUTING.md)
+Review the [guidelines for contributing](https://github.com/codejamninja/sooty/blob/master/CONTRIBUTING.md)
 
 
 ## License
 
-[MIT License](https://github.com/jamrizzi/sooty/blob/master/LICENSE)
+[MIT License](https://github.com/codejamninja/sooty/blob/master/LICENSE)
 
-[Jam Risser](https://jam.jamrizzi.com) &copy; 2018
+[Jam Risser](https://jam.codejam.ninja) &copy; 2018
 
 
 ## Changelog
 
-Review the [changelog](https://github.com/jamrizzi/sooty/blob/master/CHANGELOG.md)
+Review the [changelog](https://github.com/codejamninja/sooty/blob/master/CHANGELOG.md)
 
 
 ## Credits
 
-* [Jam Risser](https://jam.jamrizzi.com) - Author
+* [Jam Risser](https://jam.codejam.ninja) - Author
 
 
 ## Support on Beerpay (actually, I drink coffee)
 
 A ridiculous amount of coffee :coffee: :coffee: :coffee: was consumed in the process of building this project.
 
-[Add some fuel](https://beerpay.io/jamrizzi/sooty) if you'd like to keep me going!
+[Add some fuel](https://beerpay.io/codejamninja/sooty) if you'd like to keep me going!
 
-[![Beerpay](https://beerpay.io/jamrizzi/sooty/badge.svg?style=beer-square)](https://beerpay.io/jamrizzi/sooty)
-[![Beerpay](https://beerpay.io/jamrizzi/sooty/make-wish.svg?style=flat-square)](https://beerpay.io/jamrizzi/sooty?focus=wish)
+[![Beerpay](https://beerpay.io/codejamninja/sooty/badge.svg?style=beer-square)](https://beerpay.io/codejamninja/sooty)
+[![Beerpay](https://beerpay.io/codejamninja/sooty/make-wish.svg?style=flat-square)](https://beerpay.io/codejamninja/sooty?focus=wish)

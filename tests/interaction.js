@@ -29,7 +29,7 @@ afterAll(() => {
   server.close();
 });
 
-describe('new Interaction(name, url, config)', async () => {
+describe('new Interaction(name, url, config)', () => {
   it('should load config', async () => {
     const interaction = new Interaction(
       'searchCatFunnyVideos',
@@ -61,7 +61,6 @@ describe('new Interaction(name, url, config)', async () => {
           keys: [],
           scripts: [],
           scroll: undefined,
-          timeout: 1000,
           waitUntil: 'load'
         },
         {
@@ -73,7 +72,6 @@ describe('new Interaction(name, url, config)', async () => {
           keys: ['Enter'],
           scripts: [],
           scroll: undefined,
-          timeout: 1000,
           waitUntil: 'load'
         },
         {
@@ -85,7 +83,6 @@ describe('new Interaction(name, url, config)', async () => {
           keys: [],
           scripts: ["console.log('Hello, world!')"],
           scroll: undefined,
-          timeout: 1000,
           waitUntil: 'load'
         }
       ]
@@ -114,7 +111,6 @@ describe('new Interaction(name, url, config)', async () => {
           keys: [],
           scripts: [],
           scroll: undefined,
-          timeout: 1000,
           waitUntil: 'load'
         }
       ]
@@ -122,7 +118,7 @@ describe('new Interaction(name, url, config)', async () => {
   });
 });
 
-describe('interaction.validate()', async () => {
+describe('interaction.validate()', () => {
   it('should validate', async () => {
     const interaction = new Interaction(
       'searchCatFunnyVideos',
@@ -160,7 +156,7 @@ describe('interaction.validate()', async () => {
   });
 });
 
-describe('interaction.run()', async () => {
+describe('interaction.run()', () => {
   it('should fill out fields', async () => {
     const interaction = new Interaction(
       'someFieldInteraction',
