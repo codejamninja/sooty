@@ -2,7 +2,8 @@
   "extends": ["plugin:jest/recommended"],
   "rules": {
     "global-require": "off",
+    "import/no-extraneous-dependencies": "off",
     "import/no-unresolved": "off",
-    "import/no-extraneous-dependencies": "off"
+    "no-console": "off"
   }
 }

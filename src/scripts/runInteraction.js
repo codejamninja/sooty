@@ -23,9 +23,12 @@ async function runInteraction({
   scroll,
   iframe
 }) {
-  const { contentDocument } = (await nestedIframe(iframe)) || {
-    contentDocument: document
-  };
+  let contentDocument = document;
+  if (iframe.length) {
+    ({ contentDocument } = (await nestedIframe(iframe)) || {
+      contentDocument: document
+    });
+  }
   _.each(fields, (field, key) => {
     _.each(contentDocument.getElementsByName(key), element => {
       element.focus();

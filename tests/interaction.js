@@ -18,7 +18,6 @@ beforeAll(async () => {
     server.server.on('error', err => reject(err));
     server.listen(config.port, err => {
       if (err) return reject(err);
-      // eslint-disable-next-line no-console
       console.log(`listening on port ${config.port}`);
       return resolve();
     });
