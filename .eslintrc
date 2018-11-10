@@ -6,6 +6,7 @@
   },
   "rules": {
     "no-empty": "off",
-    "no-eval": "off"
+    "no-eval": "off",
+    "no-new-func": "off"
   }
 }

@@ -14,11 +14,7 @@ export async function evaluate(
   context = {},
   options = {}
 ) {
-  const {
-    debug = false,
-    debugPath = path.resolve('.tmp', 'debug'),
-    waitForPage
-  } = options;
+  const { waitForPage } = options;
   const hash = murmurHash(`${name}=${url}`);
   if (!browser) {
     browser = await puppeteer.launch({
@@ -29,14 +25,13 @@ export async function evaluate(
   }
   let { page, ref } = pages[hash] || {};
   if (page) {
-    ref++;
+    pages[hash] = {
+      ref: ++ref,
+      page
+    };
   } else {
     page = await browser.newPage();
-    ref = 0;
-    pages[hash] = {
-      page,
-      ref
-    };
+    pages[hash] = { page, ref: 0 };
     page.on('console', message => {
       // eslint-disable-next-line no-console
       if (message._text) return console.log(message._text.toString());
@@ -44,17 +39,24 @@ export async function evaluate(
       return console.log(message.toString());
     });
     await page.goto(url);
-    const scripts = fs.readFileSync(
-      path.resolve(__dirname, '../lib/scripts.js'),
-      'utf8'
-    );
-    // eslint-disable-next-line no-new-func
-    await page.evaluate(new Function(scripts));
   }
+  const scripts = fs.readFileSync(
+    path.resolve(__dirname, '../lib/scripts.js'),
+    'utf8'
+  );
+  await page.evaluate(new Function(scripts));
   const result = await page.evaluate(pageFunction, context);
   if (waitForPage) {
     await page.waitForNavigation(waitForPage).catch(() => {});
   }
+  const dom = new JSDOM(await page.evaluate(getHTML));
+  return { dom, page, result };
+}
+
+export async function doneEvaluate(name, url, options = {}) {
+  const { debug = false, debugPath = path.resolve('.tmp', 'debug') } = options;
+  const hash = murmurHash(`${name}=${url}`);
+  const { page, ref } = pages[hash] || {};
   const dom = new JSDOM(await page.evaluate(getHTML));
   if (debug) {
     const htmlPath = path.resolve(debugPath, 'html');
@@ -70,7 +72,7 @@ export async function evaluate(
       path: path.resolve(screenshotsPath, `${name}-${hash}-${ref}.png`)
     });
   }
-  return { dom, page, result };
+  return { dom, page };
 }
 
 function getHTML() {

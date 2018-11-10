@@ -5,7 +5,7 @@ import joi from 'joi';
 import joiValidate from 'easy-joi';
 import path from 'path';
 import { FINISHED, READY, WORKING } from './constants';
-import { evaluate } from './browser';
+import { evaluate, doneEvaluate } from './browser';
 
 export default class Interaction {
   constructor(name, url, config, options) {
@@ -186,6 +186,7 @@ export default class Interaction {
             .catch(() => {});
         });
       }
+      await doneEvaluate(this.name, this.url, this.options);
       return { dom, page };
     });
     this._status = FINISHED;

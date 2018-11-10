@@ -2,7 +2,7 @@ import _ from 'lodash';
 import joi from 'joi';
 import joiValidate from 'easy-joi';
 import newRegExp from 'newregexp';
-import { evaluate } from './browser';
+import { evaluate, doneEvaluate } from './browser';
 import { FINISHED, READY, WAITING, WORKING } from './constants';
 
 export default class Query {
@@ -89,6 +89,7 @@ export default class Query {
       },
       this.options
     );
+    await doneEvaluate(this.name, this.url, this.options);
     this.scraped = result;
     this._status = FINISHED;
     return this.scraped;
