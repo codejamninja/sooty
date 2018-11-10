@@ -40,7 +40,7 @@ describe('new Interaction(name, url, config)', () => {
           }
         },
         {
-          key: 'Enter'
+          key: ['press', 'Enter']
         },
         {
           script: "console.log('Hello, world!')"
@@ -68,7 +68,7 @@ describe('new Interaction(name, url, config)', () => {
           elements: undefined,
           fields: undefined,
           iframe: [],
-          keys: ['Enter'],
+          keys: [['press', 'Enter']],
           scripts: [],
           scroll: undefined,
           waitUntil: 'load'
@@ -129,7 +129,7 @@ describe('interaction.validate()', () => {
           }
         },
         {
-          key: 'Enter'
+          key: ['press', 'Enter']
         },
         {
           script: "console.log('Hello, world!')"

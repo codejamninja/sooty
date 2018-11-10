@@ -40,7 +40,7 @@ const scrapper = new Sooty({
   interactions: {
     searchCatVideos: {
       fields: { q: 'funny cat videos' }, // fill out 'q' fields
-      key: 'Enter'                       // press enter key
+      key: ['press', 'Enter']            // press enter key
     }
   }
 });
