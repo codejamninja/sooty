@@ -92,7 +92,9 @@ export default class Interaction {
             .optional(),
           fields: joi.object().optional(),
           iframe: joi.array().items(joi.string()),
-          keys: joi.array(),
+          keys: joi
+            .array()
+            .items(joi.string(), joi.array().items(joi.string())),
           scripts: joi
             .array()
             .items(joi.string())
