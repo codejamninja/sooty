@@ -20,6 +20,7 @@
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
     "prepublish": "npm run build",
+    "start": "babel-node examples/funnyCatVideos.js",
     "test": "npm run lint && npm run build:scripts && jest --forceExit",
     "test:serve": "http-server tests/public"
   },

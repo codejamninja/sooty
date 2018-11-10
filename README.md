@@ -36,17 +36,29 @@ npm install --save sooty
 import Sooty from 'sooty';
 
 const scrapper = new Sooty({
-  url: 'https://google.com',             // go to google search page
+  url: 'https://google.com',              // go to google search page
   interactions: {
-    searchCatVideos: {
-      fields: { q: 'funny cat videos' }, // fill out 'q' fields
-      key: ['press', 'Enter']            // press enter key
+    search: [
+      {                                   // fill out Google search
+        fields: { q: 'funny cat videos' }
+      },
+      {                                   // press "Google Search" button
+        click: 'input[name=btnK]',
+        waitUntil: 'networkidle0'
+      }
+    ]
+  },
+  queries: {
+    catVideos: {                          // query google search results
+      selector: '.rc .r a',
+      requires: ['search']
     }
   }
 });
-
-scrapper.run().then((results) => {
-  console.log('results', results);
+scrapper.run().then(results => {
+  results.catVideos.forEach(catVideo => {
+    console.log(`${catVideo}\n`);
+  });
 });
 ```
 
