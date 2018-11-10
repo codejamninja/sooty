@@ -13,8 +13,8 @@ export default class Interaction {
     this.options = options;
     this.config = this.loadConfig(config);
     const { steps } = this.config;
-    this.steps = steps;
     this.name = name;
+    this.steps = steps;
     this.url = url;
   }
 

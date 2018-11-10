@@ -7,8 +7,9 @@ import { FINISHED, WORKING, READY } from './constants';
 import { closeBrowser } from './browser';
 
 export default class Sooty {
-  constructor(config) {
+  constructor(config, options = {}) {
     this._status = READY;
+    this.options = options;
     this.format = 'multiple';
     this.config = this.loadConfig(config);
     this.groups = {};
@@ -33,7 +34,7 @@ export default class Sooty {
       await this.validate();
       await Promise.mapSeries(_.keys(this.config), async key => {
         const groupConfig = this.config[key];
-        const group = new Group(key, groupConfig);
+        const group = new Group(key, groupConfig, this.options);
         this.groups[key] = group;
         await group.run();
         this.results[key] = group.results;

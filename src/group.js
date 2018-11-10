@@ -7,7 +7,8 @@ import Query from './query';
 import { FINISHED, READY, WORKING } from './constants';
 
 export default class Group {
-  constructor(name, config = {}) {
+  constructor(name, config = {}, options = {}) {
+    this.options = options;
     this.config = this.loadConfig(config);
     const { interactions = {}, queries = {}, url } = this.config;
     this._status = READY;
@@ -18,10 +19,15 @@ export default class Group {
     this.results = {};
     this.url = url;
     _.each(interactions, (interaction, key) => {
-      this.interactions[key] = new Interaction(key, this.url, interaction);
+      this.interactions[key] = new Interaction(
+        key,
+        this.url,
+        interaction,
+        this.options
+      );
     });
     _.each(queries, (query, key) => {
-      this.queries[key] = new Query(key, this.url, query);
+      this.queries[key] = new Query(key, this.url, query, this.options);
     });
   }
 

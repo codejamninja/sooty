@@ -31,9 +31,10 @@ afterAll(() => {
 describe('new Query(name, url, config)', () => {
   it('should load config', async () => {
     const query = new Query(
-      'someQuery',
+      'someLoadedQuery',
       `http://localhost:${config.port}/queries.html`,
-      { selector: 'h1' }
+      { selector: 'h1' },
+      { debug: true }
     );
     expect(query.config).toEqual({
       filter: undefined,
@@ -49,9 +50,10 @@ describe('new Query(name, url, config)', () => {
 describe('interaction.validate()', () => {
   it('should validate', async () => {
     const query = new Query(
-      'someQuery',
+      'someValidatedQuery',
       `http://localhost:${config.port}/queries.html`,
-      { selector: 'h1' }
+      { selector: 'h1' },
+      { debug: true }
     );
     expect(await query.validate()).toBe(true);
   });
@@ -60,9 +62,10 @@ describe('interaction.validate()', () => {
 describe('interaction.run()', () => {
   it('should execute query', async () => {
     const query = new Query(
-      'someQuery',
+      'someExecutedQuery',
       `http://localhost:${config.port}/queries.html`,
-      { selector: 'h1' }
+      { selector: 'h1' },
+      { debug: true }
     );
     expect(await query.run()).toEqual(['Numbers']);
   });
@@ -70,7 +73,8 @@ describe('interaction.run()', () => {
     const query = new Query(
       'someFilteredQuery',
       `http://localhost:${config.port}/queries.html`,
-      { selector: 'li', filter: '/On|Three/g' }
+      { selector: 'li', filter: '/On|Three/g' },
+      { debug: true }
     );
     expect(await query.run()).toEqual(['On', 'Three']);
   });
@@ -78,7 +82,8 @@ describe('interaction.run()', () => {
     const query = new Query(
       'someReplacedQuery',
       `http://localhost:${config.port}/queries.html`,
-      { selector: 'li', replace: { match: '/On/g', value: 'bon' } }
+      { selector: 'li', replace: { match: '/On/g', value: 'bon' } },
+      { debug: true }
     );
     expect(await query.run()).toEqual(['bone', 'Two', 'Three']);
   });

@@ -6,20 +6,21 @@ import { evaluate } from './browser';
 import { FINISHED, READY, WAITING, WORKING } from './constants';
 
 export default class Query {
-  constructor(name, url, config) {
+  constructor(name, url, config, options) {
     this._status = WAITING;
+    this.options = options;
     this.config = this.loadConfig(config);
     const { filter, html, iframe, replace, requires, selector } = this.config;
     this.filter = filter;
     this.html = html;
     this.iframe = iframe;
     this.name = name;
+    this.replace = replace;
+    this.requires = requires;
     this.result = [];
     this.scraped = null;
     this.selector = selector;
     this.url = url;
-    this.requires = requires;
-    this.replace = replace;
   }
 
   loadConfig({
@@ -77,11 +78,17 @@ export default class Query {
 
   async runScrape() {
     this._status = WORKING;
-    const { result } = await evaluate(this.name, this.url, scrapeQuery, {
-      html: this.html,
-      iframe: this.iframe,
-      selector: this.selector
-    });
+    const { result } = await evaluate(
+      this.name,
+      this.url,
+      scrapeQuery,
+      {
+        html: this.html,
+        iframe: this.iframe,
+        selector: this.selector
+      },
+      this.options
+    );
     this.scraped = result;
     this._status = FINISHED;
     return this.scraped;

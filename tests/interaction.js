@@ -31,7 +31,7 @@ afterAll(() => {
 describe('new Interaction(name, url, config)', () => {
   it('should load config', async () => {
     const interaction = new Interaction(
-      'searchCatFunnyVideos',
+      'searchCatFunnyVideosLoaded',
       'https://google.com',
       [
         {
@@ -89,7 +89,7 @@ describe('new Interaction(name, url, config)', () => {
   });
   it('should guess steps', async () => {
     const interaction = new Interaction(
-      'searchCatFunnyVideos',
+      'searchCatFunnyVideosGuessedSteps',
       'https://google.com',
       {
         fields: {
@@ -120,7 +120,7 @@ describe('new Interaction(name, url, config)', () => {
 describe('interaction.validate()', () => {
   it('should validate', async () => {
     const interaction = new Interaction(
-      'searchCatFunnyVideos',
+      'searchCatFunnyVideosValidated',
       'https://google.com',
       [
         {
@@ -140,7 +140,7 @@ describe('interaction.validate()', () => {
   });
   it('should invalidate', async () => {
     const interaction = new Interaction(
-      'searchCatFunnyVideos',
+      'searchCatFunnyVideosInvalidated',
       'https://google.com',
       { fields: 5000 }
     );
