@@ -44,15 +44,20 @@ export default class Group {
     let { interactions } = config;
     if (
       _.isArray(interactions) ||
-      _.difference(_.keys(interactions), [
+      !_.difference(_.keys(interactions), [
         'click',
+        'clicks',
         'delay',
         'elements',
         'fields',
+        'focus',
+        'hover',
         'iframe',
         'key',
         'keys',
-        'script'
+        'scripts',
+        'scroll',
+        'waitUntil'
       ]).length
     ) {
       interactions = { interaction: interactions };

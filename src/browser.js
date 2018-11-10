@@ -39,9 +39,9 @@ export async function evaluate(
     };
     page.on('console', message => {
       // eslint-disable-next-line no-console
-      if (message._type) return console[message._type](message._text);
+      if (message._text) return console.log(message._text.toString());
       // eslint-disable-next-line no-console
-      return console.log(message);
+      return console.log(message.toString());
     });
     await page.goto(url);
     const scripts = fs.readFileSync(

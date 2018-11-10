@@ -32,10 +32,12 @@ export default class Interaction {
         script,
         waitUntil = 'load'
       } = step;
-      let { iframe = [], scripts = [], scroll } = step;
+      let { focus = [], hover = [], iframe = [], scripts = [], scroll } = step;
       if (click) clicks.push(click);
       if (key) keys.push(key);
       if (script) scripts.push(script);
+      if (!_.isArray(focus)) focus = [focus];
+      if (!_.isArray(hover)) hover = [hover];
       if (!_.isArray(iframe)) iframe = [iframe];
       scripts = _.map(scripts, script => {
         if (/^[\w\s_\-./\\]+$/g.test(script)) {
@@ -58,6 +60,8 @@ export default class Interaction {
         delay,
         elements,
         fields,
+        focus,
+        hover,
         iframe,
         keys,
         scripts,
@@ -91,6 +95,8 @@ export default class Interaction {
             )
             .optional(),
           fields: joi.object().optional(),
+          focus: joi.array().items(joi.string()),
+          hover: joi.array().items(joi.string()),
           iframe: joi.array().items(joi.string()),
           keys: joi
             .array()
@@ -124,7 +130,15 @@ export default class Interaction {
       let waitForPage = null;
       if (
         step.clicks.length ||
-        _.includes(_.map(step.keys, key => key.toLowerCase()), 'enter')
+        _.includes(
+          _.map(step.keys, key => {
+            if (_.isArray(key) && key.length >= 2 && key[0] !== 'type') {
+              return key[1].toLowerCase();
+            }
+            return null;
+          }),
+          'enter'
+        )
       ) {
         waitForPage = {
           timeout: step.delay || 3000,
@@ -147,20 +161,29 @@ export default class Interaction {
       if (!waitForPage && step.delay) {
         await new Promise(r => setTimeout(r, step.delay));
       }
-      if (this.keys) {
-        await Promise.mapSeries(step.keys, key => {
-          return Promise.mapSeries([
-            page.keyboard.press(key),
-            _.isArray(key) && key.length >= 2
-              ? page.keyboard[key[0]](key[1])
-              : page.keyboard.type(key),
-            page
-              .waitForNavigation({
-                timeout: step.delay || 10000,
-                waitUntil: step.waitUntil
-              })
-              .catch(() => {})
-          ]);
+      if (step.hover) {
+        await Promise.mapSeries(step.hover, async hover => {
+          return page.hover(hover);
+        });
+      }
+      if (step.focus) {
+        await Promise.mapSeries(step.focus, async focus => {
+          return page.focus(focus);
+        });
+      }
+      if (step.keys) {
+        await Promise.mapSeries(step.keys, async key => {
+          if (_.isArray(key) && key.length >= 2) {
+            await page.keyboard[key[0]](key[1]);
+          } else {
+            await page.keyboard.type(key);
+          }
+          await page
+            .waitForNavigation({
+              timeout: step.delay || 10000,
+              waitUntil: step.waitUntil
+            })
+            .catch(() => {});
         });
       }
       return { dom, page };

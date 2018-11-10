@@ -5,6 +5,7 @@
     "window": true
   },
   "rules": {
+    "no-empty": "off",
     "no-eval": "off"
   }
 }

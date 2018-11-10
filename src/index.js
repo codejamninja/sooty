@@ -44,7 +44,6 @@ export default class Sooty {
       this._status = FINISHED;
       return this.results;
     } catch (err) {
-      await closeBrowser();
       throw err;
     }
   }
