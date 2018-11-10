@@ -126,7 +126,7 @@ export default class Interaction {
 
   async run() {
     this._status = WORKING;
-    const result = Promise.mapSeries(this.steps, async step => {
+    const result = await Promise.mapSeries(this.steps, async step => {
       let waitForPage = null;
       if (
         step.clicks.length ||

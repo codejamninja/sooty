@@ -57,7 +57,7 @@ export default class Query {
     if (this._status !== FINISHED && this._status !== WORKING) {
       let status = READY;
       _.each(this.requires, required => {
-        if ((!_.includes(finishedInteractions), required)) {
+        if (!_.includes(finishedInteractions, required)) {
           status = WAITING;
         }
       });

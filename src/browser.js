@@ -15,7 +15,7 @@ export async function evaluate(
   options = {}
 ) {
   const { waitForPage } = options;
-  const hash = murmurHash(`${name}=${url}`);
+  const hash = murmurHash(url);
   if (!browser) {
     browser = await puppeteer.launch({
       executablePath: process.env.CHROME_BIN || null,
@@ -55,7 +55,7 @@ export async function evaluate(
 
 export async function doneEvaluate(name, url, options = {}) {
   const { debug = false, debugPath = path.resolve('.tmp', 'debug') } = options;
-  const hash = murmurHash(`${name}=${url}`);
+  const hash = murmurHash(url);
   const { page, ref } = pages[hash] || {};
   const dom = new JSDOM(await page.evaluate(getHTML));
   if (debug) {

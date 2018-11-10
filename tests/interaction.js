@@ -167,7 +167,7 @@ describe('interaction.run()', () => {
   it('should fill out fields', async () => {
     const interaction = new Interaction(
       'someFieldInteraction',
-      `http://localhost:${config.port}/interactions.html`,
+      `http://localhost:${config.port}/interactions.html#someFieldInteraction`,
       {
         fields: {
           firstName: 'Darth',
@@ -188,7 +188,7 @@ describe('interaction.run()', () => {
   it('should click buttons', async () => {
     const interaction = new Interaction(
       'someClickInteraction',
-      `http://localhost:${config.port}/interactions.html`,
+      `http://localhost:${config.port}/interactions.html#someClickInteraction`,
       {
         click: '#submit'
       },
@@ -201,7 +201,9 @@ describe('interaction.run()', () => {
   it('should modify elements', async () => {
     const interaction = new Interaction(
       'someElementInteraction',
-      `http://localhost:${config.port}/interactions.html`,
+      `http://localhost:${
+        config.port
+      }/interactions.html#someElementInteraction`,
       {
         elements: [
           {
@@ -223,7 +225,7 @@ describe('interaction.run()', () => {
   it('should work with iframes', async () => {
     const interaction = new Interaction(
       'someIframeInteraction',
-      `http://localhost:${config.port}/interactions.html`,
+      `http://localhost:${config.port}/interactions.html#someIframeInteraction`,
       {
         iframe: '#iframe',
         elements: [
