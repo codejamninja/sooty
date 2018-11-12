@@ -4,7 +4,7 @@ import { window } from 'isomorphic-dom';
 
 const { document } = window;
 
-async function scrapeQuery({ html, iframe, selector }) {
+async function scrapeQuery({ html, iframe, selector, attribute }) {
   let contentDocument = document;
   if (iframe.length) {
     ({ contentDocument } = nestedIframe(iframe) || {
@@ -13,7 +13,11 @@ async function scrapeQuery({ html, iframe, selector }) {
   }
   const results = [];
   _.each(contentDocument.querySelectorAll(selector), element => {
-    results.push(html ? element.innerHTML : element.innerText);
+    if (attribute) {
+      results.push(element[attribute]);
+    } else {
+      results.push(html ? element.innerHTML : element.innerText);
+    }
   });
   return results;
 }

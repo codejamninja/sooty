@@ -10,7 +10,16 @@ export default class Query {
     this._status = WAITING;
     this.options = options;
     this.config = this.loadConfig(config);
-    const { filter, html, iframe, replace, requires, selector } = this.config;
+    const {
+      attribute,
+      filter,
+      html,
+      iframe,
+      replace,
+      requires,
+      selector
+    } = this.config;
+    this.attribute = attribute;
     this.filter = filter;
     this.html = html;
     this.iframe = iframe;
@@ -24,6 +33,7 @@ export default class Query {
   }
 
   loadConfig({
+    attribute,
     filter,
     html = false,
     iframe = [],
@@ -44,6 +54,7 @@ export default class Query {
       return item;
     });
     return {
+      attribute,
       filter,
       html,
       iframe,
@@ -83,6 +94,7 @@ export default class Query {
       this.url,
       scrapeQuery,
       {
+        attribute: this.attribute,
         html: this.html,
         iframe: this.iframe,
         selector: this.selector
@@ -114,6 +126,7 @@ export default class Query {
 
   async validate() {
     await joiValidate(this.config, {
+      attribute: joi.string().optional(),
       filter: joi
         .array()
         .items(joi.string())
