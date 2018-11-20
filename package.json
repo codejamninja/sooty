@@ -1,6 +1,6 @@
 {
   "name": "sooty",
-  "version": "0.0.24",
+  "version": "0.0.26",
   "description": "A bit of oofle dust to scrape websites",
   "homepage": "https://github.com/codejamninja/sooty",
   "author": {
@@ -16,7 +16,7 @@
     "build": "npm run clean && npm run test && npm run build:lib && npm run build:scripts",
     "build:lib": "babel src --ignore src/scripts -d lib",
     "build:scripts": "parcel build src/scripts/index.js -d lib -o scripts.js",
-    "clean": "rm -rf lib .cache .tmp && jest --clearCache",
+    "clean": "git clean -fXd -e \\!node_modules -e \\!node_modules/**/*",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
     "prepublish": "npm run build",

@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom';
 import { murmurHash } from 'murmurhash-native';
 
 let browser = null;
-const pages = {};
+let pages = {};
 
 export async function evaluate(
   name,
@@ -80,7 +80,12 @@ function getHTML() {
 }
 
 export async function closeBrowser() {
-  if (browser) return browser.close();
+  if (browser) {
+    const result = browser.close();
+    pages = {};
+    browser = null;
+    return result;
+  }
   return null;
 }
 
